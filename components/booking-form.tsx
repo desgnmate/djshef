@@ -6,7 +6,7 @@ import { ArrowUpRight } from "@/components/icons";
 export function BookingForm() {
   const [status, setStatus] = useState("");
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const required = ["name", "email", "event", "city", "date"];
@@ -15,8 +15,9 @@ export function BookingForm() {
       return;
     }
 
-    const subject = encodeURIComponent(`Booking enquiry — ${form.get("event")} — ${form.get("city")}`);
-    const body = encodeURIComponent([
+    const brief = [
+      `SHEF booking enquiry — ${form.get("event")} — ${form.get("city")}`,
+      "",
       `Name: ${form.get("name")}`,
       `Email: ${form.get("email")}`,
       `Company: ${form.get("company") || "—"}`,
@@ -27,10 +28,14 @@ export function BookingForm() {
       `Budget: ${form.get("budget") || "—"}`,
       "",
       String(form.get("message") || "No additional notes."),
-    ].join("\n"));
+    ].join("\n");
 
-    setStatus("Your email app is opening with the booking brief prepared.");
-    window.location.href = `mailto:dcrmilda@gmail.com?subject=${subject}&body=${body}`;
+    try {
+      await navigator.clipboard.writeText(brief);
+      setStatus("Booking brief copied. Send it to @shef.dj through the official Instagram profile.");
+    } catch {
+      setStatus("Copying was blocked by your browser. Select the details above and send them to @shef.dj.");
+    }
   }
 
   return (
@@ -47,8 +52,8 @@ export function BookingForm() {
       </div>
       <label className="form-message"><span>Tell us about the room</span><textarea name="message" rows={5} placeholder="Venue, lineup, set time, audience, and anything we should know." /></label>
       <div className="form-submit-row">
-        <p role="status" aria-live="polite">{status || "Replies are typically handled by the artist team."}</p>
-        <button className="button button-light" type="submit">Prepare enquiry <ArrowUpRight /></button>
+        <p role="status" aria-live="polite">{status || "This form keeps your details on your device until you choose where to send them."}</p>
+        <button className="button button-light" type="submit">Copy booking brief <ArrowUpRight /></button>
       </div>
     </form>
   );

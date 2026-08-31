@@ -53,10 +53,10 @@ export function MotionDirector() {
       });
 
       gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((element) => {
-        const image = element.querySelector("img");
-        if (!image) return;
+        const media = element.querySelector<HTMLElement>("img, video");
+        if (!media) return;
         const isHero = element.dataset.parallax === "hero";
-        gsap.fromTo(image, { yPercent: isHero ? -1.5 : -6, scale: isHero ? 1.025 : 1.08 }, {
+        gsap.fromTo(media, { yPercent: isHero ? -1.5 : -6, scale: isHero ? 1.025 : 1.08 }, {
           yPercent: isHero ? 2.5 : 6,
           scale: 1,
           ease: "none",

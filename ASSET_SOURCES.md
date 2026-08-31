@@ -1,39 +1,37 @@
-# Migrated brand assets
+# SHEF asset sources
 
-The following assets are downloaded from the existing DCR MILDA Squarespace website and stored locally so the new site does not depend on the legacy CDN at runtime.
+The following public images are stored locally so the site does not depend on expiring social-platform image URLs at runtime.
 
-## Brand mark
+## Instagram photography
 
-- `public/images/dcr-logo.webp` — [DCR MILDA official logo](https://images.squarespace-cdn.com/content/v1/5db9e6433078cb126c79aa78/dc336dfb-e530-4d4a-b8e6-5a653644f2c3/DCR+Milda+Logo-04.png)
+- `shef-hero.jpg` and `shef-portrait.jpg` — [SHEF portrait carousel](https://www.instagram.com/shef.dj/p/DcYKTcNnd9v/)
+- `shef-green.jpg` and `shef-food.jpg` — [SHEF visual diary carousel](https://www.instagram.com/shef.dj/p/Dbk0kcZHYq1/)
+- `shef-live.jpg` — [STEMS Official performance clip featuring SHEF](https://www.instagram.com/stemsofficial.wav/reel/DYgnju0zg4Q/)
+- `shef-backstage.jpg` — [SHEF Crysalis Tour post](https://www.instagram.com/shef.dj/p/DZY4Q3-Ez0R/)
 
-## Photography
+## Supplied STEMS video
 
-- `dcr-cyan.jpg` — [Milda 15-17952](https://images.squarespace-cdn.com/content/v1/5db9e6433078cb126c79aa78/d550775a-5f0f-44f9-baf5-aa66e54ea868/Milda+15-17952.jpg)
-- `dcr-red.jpg` — [Milda 15-18145](https://images.squarespace-cdn.com/content/v1/5db9e6433078cb126c79aa78/f0485336-dfaa-4da0-bb29-4ca31b56bc1e/Milda+15-18145.jpg)
-- `dcr-editorial.jpg` — [Milda 15-17702](https://images.squarespace-cdn.com/content/v1/5db9e6433078cb126c79aa78/444ec8a8-86e3-4fcb-bf0c-64e789a56fb0/Milda+15-17702.jpg)
-- `dcr-portrait-film.jpg` — [000038190001](https://images.squarespace-cdn.com/content/v1/5db9e6433078cb126c79aa78/1718214399550-KZEGYH1EPO9MRE5QSGDI/000038190001.jpg)
-- `dcr-prague.jpg` — [DSC04512](https://images.squarespace-cdn.com/content/v1/5db9e6433078cb126c79aa78/1698878464995-JTIG0DIKYRNNSBMKBL58/DSC04512.jpg)
-- `dcr-live-green.jpg` — [0F3A3753](https://images.squarespace-cdn.com/content/v1/5db9e6433078cb126c79aa78/1746740681955-08C5KNHFOV9VO8NMQI6B/0F3A3753.jpg)
-- `dcr-leather.jpg` — [DSC09915-Edit](https://images.squarespace-cdn.com/content/v1/5db9e6433078cb126c79aa78/1773568632459-65J8JCII0463E1EAZO6R/DSC09915-Edit.jpg)
-- `dcr-crowd.jpg` — [2J8A7922](https://images.squarespace-cdn.com/content/v1/5db9e6433078cb126c79aa78/b58d4d21-dfcd-4af5-aa5d-36676318713f/2J8A7922.jpg)
-- `dcr-backstage.jpg` — [IMG_1906](https://images.squarespace-cdn.com/content/v1/5db9e6433078cb126c79aa78/1698878472418-RFYSHN6HFZBHWVRXD4OF/IMG_1906.jpg)
-- `dcr-night.jpg` — [0I4A9554](https://images.squarespace-cdn.com/content/v1/5db9e6433078cb126c79aa78/1746740646464-S6E0EILA4NQRBBX1H4QS/0I4A9554.jpg)
+- `public/videos/shef-stems-vault.mp4` and `shef-stems-vault-poster.jpg` — supplied “From The Vault” STEMS performance video featuring SHEF
 
-## Legacy social destinations
+## Supplied Drive photography
 
-- [Instagram](https://www.instagram.com/dcrmilda/)
-- [TikTok](https://www.tiktok.com/@dcrmilda?lang=en)
-- [Facebook](https://www.facebook.com/milda.dcr)
-- [SoundCloud](https://soundcloud.com/dcr-milda)
-- [Linktree](https://linktr.ee/dcrmilda)
+- `shef-drive-1196.jpg`, `shef-drive-1247.jpg` — black leather studio set from the supplied [SHEF photo folder](https://drive.google.com/drive/folders/1cfyGzDDWQkZaN1I50J3GOrQAEEboAFy9?usp=sharing)
+- `shef-drive-orange-45287.jpg`, `shef-drive-orange-45390.jpg`, `shef-drive-orange-45422.jpg`, `shef-drive-orange-45450.jpg` — coral editorial set from the same supplied folder
 
-## Direct event destinations
+## SoundCloud artwork
 
-Verified from the artist's Link.me profile on 26 August 2026 and linked directly from the tour list:
+- `shef-soundcloud-banner.jpg` — [SHEF SoundCloud profile visual](https://soundcloud.com/shef-699974995)
+- `shef-dg-radio.jpg` — [DG Radio: Episode 21 — SHEF](https://soundcloud.com/dangerous-goods-ent/dg-radio-episode-21-shef)
+- `shef-crysalis.jpg` — [Jenevieve's Crysalis Tour — Brisbane set](https://soundcloud.com/shef-699974995/jenevieves-set-bris)
 
-- Upper Hong Kong — [Mandos event page](https://mandosapp.com/event-details/cmsmrok9v09o001mhcz3vqkuh)
-- The Gawli Show, Yangon — [Gawli Worldwide](https://gawliworldwide.com/)
+## Audio preview
 
-Listings without a verified promoter URL intentionally display `Info soon` rather than sending visitors through Link.me.
+- `public/audio/shef-psytrance-preview.mp3` — 30-second local preview generated from the supplied “Psytrance Freestyle Mix 2025-07-13” audio file
+
+## Official destinations
+
+- [Instagram](https://www.instagram.com/shef.dj/)
+- [SoundCloud](https://soundcloud.com/shef-699974995)
+- [DG Radio: Episode 21](https://soundcloud.com/dangerous-goods-ent/dg-radio-episode-21-shef)
 
 Photography credits and final usage permissions should be confirmed with the artist team before public launch.

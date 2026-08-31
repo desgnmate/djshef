@@ -6,9 +6,9 @@ import { useEffect, useState } from "react";
 
 const links = [
   { label: "Music", href: "/#music" },
-  { label: "Tour", href: "/#tour" },
+  { label: "Sets", href: "/#sets" },
   { label: "Story", href: "/#story" },
-  { label: "Archive", href: "/#archive" },
+  { label: "Visuals", href: "/#archive" },
 ] as const;
 
 export function Navigation() {
@@ -29,10 +29,9 @@ export function Navigation() {
 
   return (
     <header className={`site-header${isHome ? " home-header" : ""}${open ? " menu-open" : ""}`}>
-      <Link href="/" className="wordmark" aria-label="DCR MILDA home" onClick={() => setOpen(false)}>
-        <span className="brand-logo" aria-hidden="true">
-        </span>
-        <span>DCR MILDA</span>
+      <Link href="/" className="wordmark" aria-label="SHEF home" onClick={() => setOpen(false)}>
+        <span className="brand-logo" aria-hidden="true">S</span>
+        <span>SHEF</span>
       </Link>
 
       <nav className="desktop-nav" aria-label="Primary navigation">
@@ -69,7 +68,7 @@ export function Navigation() {
             <span className="mobile-menu-label">Booking</span>
           </Link>
         </div>
-        <p className="mobile-menu-note">Global house / worldwide<br />Toronto · Prague · Saigon</p>
+        <p className="mobile-menu-note">No set menu<br />HCMC · Melbourne · beyond</p>
       </div>
     </header>
   );

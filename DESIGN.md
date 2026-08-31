@@ -1,37 +1,34 @@
-# DCR MILDA — Design system
+# SHEF — design system
 
 ## Direction
 
-The site is a monochrome gallery shell around high-impact artist photography. Pure black is the canvas; photographs carry all chromatic energy. Display typography is oversized, light in weight, tightly tracked, and always paired with a short 1px underline mark. Interface copy uses a quiet mono face at 10–12px.
+SHEF's identity combines club photography with the language of a late-night kitchen: service, plates, heat, and a menu that changes with the room. The site uses warm off-black, bone, chili red, and acid green rather than a generic monochrome DJ treatment.
 
-The experience should feel like moving through rooms in an artist exhibition, not navigating a conventional music template.
+The composition is editorial and physical—oversized typography, sharp rules, cropped portraits, and compact mono labels. The visual diary deliberately mixes polished press photography, live frames, backstage moments, and food.
 
 ## Tokens
 
-- Void `#000000`: universal canvas
-- Bone `#ffffff`: primary type and high-contrast rules
-- Frost `#e2e2e2`: hairlines and quiet dividers
-- Charcoal `#444345`: pressed-in controls
-- Ash `#b8bab9`: supporting copy
-- Display: Inter Tight 400, used as the Roobert substitute
-- Interface: JetBrains Mono 400, used as the GT America Mono substitute
-- Interactive radius: 2px
-- Shadows and decorative gradients: none. Gradients are permitted only as image-legibility scrims.
+- Night `#100d0c`: primary canvas
+- Bone `#f5f0e7`: text and editorial surfaces
+- Chili `#d9342b`: primary brand accent
+- Acid `#b7c85b`: secondary signal used sparingly
+- Ash `#aaa098`: supporting copy
+- Display: Space Grotesk 400–700
+- Interface: IBM Plex Mono 400–600
 
 ## Signature devices
 
-- Full-bleed art frames with no card chrome
-- Monumental left-aligned titles with aggressive line-height
-- Frost underline marks beneath display lines
-- Sequential mono section codes (`001`, `002`, …)
-- Thin viewport progress rule
-- Slow image parallax and masked type reveals
-- Horizontal travel through the visual archive on desktop
+- Monumental SHEF wordmark over full-bleed portrait photography
+- Menu and kitchen language used with restraint
+- Chili-red music section and acid-green visual archive
+- Cropped vertical photography with compact source-style captions
+- Thin scroll-progress rule and masked display-type reveals
+- Horizontal visual diary on desktop
 
-## Motion principles
+## Motion
 
-Motion should feel weighty and editorial. Use transforms and opacity only. The route loader moves like a white stage curtain; titles reveal from clipped baselines; photography drifts by no more than 12% across a scroll range. All motion is disabled or reduced under `prefers-reduced-motion`.
+Motion is weighty and editorial. Transforms and opacity drive all reveals. Photography drifts subtly with scroll; the hero alternates between two official portraits; the visual diary travels horizontally on larger screens. Reduced-motion preferences disable the animated behavior.
 
-## Content voice
+## Voice
 
-Short, declarative, and physical. Avoid marketing filler. The central idea is movement without borders: three continents, one dance floor.
+Short, confident, playful. The central idea is “no set menu”: SHEF reads the room and moves across house, R&B, hard bounce, techno, and psytrance without forcing a single-genre story.
