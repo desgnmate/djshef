@@ -19,3 +19,6 @@ npm-debug.log*
 yarn-debug.log*
 pnpm-debug.log*
 .vercel
+
+# Supabase CLI metadata
+/supabase/.temp

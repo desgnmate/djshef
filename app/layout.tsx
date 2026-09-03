@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
-import { draftMode } from "next/headers";
 import { IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
 import { MotionDirector } from "@/components/motion-director";
 import { Navigation } from "@/components/navigation";
-import { VisualEditing } from "next-sanity/visual-editing";
-import { SanityLive } from "@/lib/sanity/live";
 import { getSiteContent } from "@/lib/content";
-import { isSanityConfigured } from "@/lib/sanity/env";
 import "./globals.css";
 
 const display = Space_Grotesk({
@@ -44,8 +40,6 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const isDraftMode = isSanityConfigured ? (await draftMode()).isEnabled : false;
-
   return (
     <html lang="en" className={`${display.variable} ${mono.variable}`}>
       <body>
@@ -57,8 +51,6 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <Navigation />
         <MotionDirector />
         {children}
-        {isDraftMode && <SanityLive includeDrafts />}
-        {isDraftMode && <VisualEditing />}
       </body>
     </html>
   );

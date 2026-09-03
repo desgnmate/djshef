@@ -9,7 +9,7 @@ export function MotionDirector() {
   const pathname = usePathname();
 
   useLayoutEffect(() => {
-    if (pathname.startsWith("/studio")) {
+    if (pathname.startsWith("/admin")) {
       document.querySelector<HTMLElement>(".page-loader")?.style.setProperty("display", "none");
       document.querySelector<HTMLElement>(".scroll-progress")?.style.setProperty("display", "none");
       return;

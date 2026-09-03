@@ -1,7 +1,6 @@
 import { appearances as fallbackAppearances, gallery as fallbackGallery, mixes as fallbackMixes, socials as fallbackSocials } from "@/data/site";
-import { isSanityConfigured } from "@/lib/sanity/env";
-import { sanityFetch } from "@/lib/sanity/live";
-import { homeQuery } from "@/lib/sanity/queries";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export type Release = {
   year: string;
@@ -188,13 +187,13 @@ type RawContent = {
 function normalizeContent(raw: RawContent): SiteContent {
   const source = raw.settings ?? {};
   const settings = fallbackSiteContent.settings;
-  const releaseItems = raw.releases?.filter((item) => typeof item.title === "string" && typeof item.soundcloudUrl === "string").map((item) => ({
+  const releaseItems = raw.releases?.filter((item) => typeof item.title === "string" && (typeof item.href === "string" || typeof item.soundcloudUrl === "string")).map((item) => ({
     year: nonEmptyString(item.year, "2026"),
     title: nonEmptyString(item.title, "SHEF release"),
     note: nonEmptyString(item.note, "SHEF session"),
-    href: nonEmptyString(item.soundcloudUrl, "https://soundcloud.com/shef-699974995"),
-    previewUrl: typeof item.previewUrl === "string" ? item.previewUrl : undefined,
-    coverImage: typeof item.coverImage === "string" ? item.coverImage : undefined,
+    href: nonEmptyString(item.href ?? item.soundcloudUrl, "https://soundcloud.com/shef-699974995"),
+    previewUrl: typeof (item.previewUrl ?? item.preview_url) === "string" ? (item.previewUrl ?? item.preview_url) as string : undefined,
+    coverImage: typeof (item.coverImage ?? item.cover_image) === "string" ? (item.coverImage ?? item.cover_image) as string : undefined,
   })) ?? [];
   const appearanceItems = raw.appearances?.filter((item) => typeof item.city === "string").map((item) => ({
     year: nonEmptyString(item.year, "2026"),
@@ -272,11 +271,29 @@ function normalizeContent(raw: RawContent): SiteContent {
 }
 
 export async function getSiteContent(): Promise<SiteContent> {
-  if (!isSanityConfigured) return fallbackSiteContent;
+  if (!isSupabaseConfigured) return fallbackSiteContent;
 
   try {
-    const { data } = await sanityFetch({ query: homeQuery, stega: false, tags: ["sanity"] });
-    return normalizeContent((data ?? {}) as RawContent);
+    const supabase = await createSupabaseServerClient();
+    const [settingsResult, releasesResult, appearancesResult, galleryResult, pressKitResult] = await Promise.all([
+      supabase.from("site_settings").select("*").eq("id", "site").maybeSingle(),
+      supabase.from("releases").select("*").eq("published", true).order("sort_order", { ascending: true }).order("year", { ascending: false }),
+      supabase.from("appearances").select("*").eq("published", true).order("sort_order", { ascending: true }).order("year", { ascending: false }),
+      supabase.from("gallery_items").select("*").eq("published", true).order("sort_order", { ascending: true }),
+      supabase.from("press_kit").select("*").eq("id", "press").maybeSingle(),
+    ]);
+
+    if (settingsResult.error || releasesResult.error || appearancesResult.error || galleryResult.error || pressKitResult.error) {
+      return fallbackSiteContent;
+    }
+
+    return normalizeContent({
+      settings: ((settingsResult.data as { content?: unknown } | null)?.content ?? settingsResult.data ?? null) as Record<string, unknown> | null,
+      releases: (releasesResult.data ?? []) as Array<Record<string, unknown>>,
+      appearances: (appearancesResult.data ?? []) as Array<Record<string, unknown>>,
+      gallery: (galleryResult.data ?? []) as Array<Record<string, unknown>>,
+      pressKit: ((pressKitResult.data as { content?: unknown } | null)?.content ?? pressKitResult.data ?? null) as Record<string, unknown> | null,
+    });
   } catch {
     return fallbackSiteContent;
   }

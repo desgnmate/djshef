@@ -30,4 +30,7 @@ See `ASSET_SOURCES.md` for the photography, artwork, and public-profile source i
 
 ## Content management
 
-Sanity CMS support is included for the homepage, releases, featured sessions, gallery, press kit, and SEO settings. See [`CMS.md`](./CMS.md) for project setup, the one-time content migration, draft previews, and Vercel environment variables.
+The site includes a self-hosted Supabase CMS at `/admin` for the homepage,
+releases, featured sessions, gallery, press kit, and SEO settings. See
+[`CMS.md`](./CMS.md) for the one-time database setup, Auth allowlist, and
+editing workflow.

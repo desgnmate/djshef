@@ -1,28 +1,43 @@
-# SHEF CMS setup
+# SHEF self-hosted CMS
 
-The site uses Sanity as a headless CMS. Until a Sanity project is connected, the site renders the curated content in `lib/content.ts`, so local development and the existing Vercel deployment remain safe.
+The site now uses Supabase for content storage and Auth. There is no hosted
+studio or third-party editor in the app: the private `/admin` page is a small
+editor served by the same Next.js deployment.
 
-## Connect a Sanity project
+## One-time setup
 
-1. Create a Sanity project and a `production` dataset.
-2. Copy `.env.example` to `.env.local` and fill in `NEXT_PUBLIC_SANITY_PROJECT_ID` and `NEXT_PUBLIC_SANITY_DATASET`.
-3. Add a read token with Viewer access as `SANITY_API_READ_TOKEN` for server-side draft/live content.
-4. Set `NEXT_PUBLIC_SANITY_STUDIO_URL` to the deployed site URL plus `/studio`.
-5. Run `npm run dev`, then open `http://localhost:3000/studio`.
-6. Run `SANITY_API_WRITE_TOKEN=... npm run cms:seed` once to migrate the current SHEF copy, links, and local media into Sanity.
+1. Connect the Vercel Supabase integration to the project (the production
+   project is `supabase-sky-canvas`).
+2. Copy `.env.example` to `.env.local` and fill in the Supabase URL and
+   publishable key. Keep `SUPABASE_SERVICE_ROLE_KEY` server-only.
+3. Apply `supabase/migrations/20260903103159_shef_cms.sql` to the connected
+   project. The included script is the easiest local route:
 
-The seed script uploads the existing image, video, and audio assets and creates one settings document, one press-kit document, four releases, four appearances, and six gallery images.
+   `npm run cms:db`
 
-## Draft previews and publishing
+4. Create the editor account in Supabase Dashboard → Authentication → Users.
+   Set its email in `CMS_ADMIN_EMAIL` (comma-separate additional editors if
+   needed). The default Vercel setup uses `hello@desgnmate.com`.
+5. Seed the current SHEF copy, links, and local asset paths once:
 
-Set `DRAFT_SECRET` to a private value. A Sanity Presentation Tool preview can enable Draft Mode with:
+   `npm run cms:seed`
 
-`/api/draft-mode/enable?secret=YOUR_SECRET&slug=/`
+## Editing content
 
-The route only accepts local paths and redirects to the requested page after validating the secret. Exit preview with a `POST` to `/api/draft-mode/disable`.
+Open `/admin`, sign in with the approved Supabase Auth account, and edit the
+single JSON document. The editor keeps the content model portable and makes it
+easy to export or version-control. Keep the top-level keys (`settings`,
+`mixes`, `appearances`, `gallery`, `socials`, and `pressKit`) intact. Set a row's
+`published` value to `false` to hide it from the public site. Saving revalidates
+the home page and press kit immediately.
 
-For published-content cache invalidation, create a Sanity webhook targeting `/api/revalidate`, set its HMAC secret to `SANITY_REVALIDATE_SECRET`, and send the webhook signature in the standard Sanity headers. The route refreshes the shared Sanity cache after verified mutations.
+Images, video, and audio continue to use the checked-in files in `public/`.
+Supabase Storage can be added later without changing the public content API.
 
-## Vercel environment variables
+## Security model
 
-Add the same public project variables plus the server-only read, preview, and webhook secrets in the Vercel project settings for each environment. Keep write tokens local; they are only needed for the one-time seed command.
+Public pages use the publishable key and can only select published rows through
+RLS policies. The service-role key is used only inside the protected Next.js
+admin route after the signed-in user's email or ID passes the CMS allowlist; it
+is never sent to the browser. Do not use editable `user_metadata` for access
+decisions.
