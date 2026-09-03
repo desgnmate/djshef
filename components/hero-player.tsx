@@ -4,11 +4,25 @@ import Image from "next/image";
 import { Pause, Play, Waveform } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 
-const previewTrack = "/audio/shef-psytrance-preview.mp3";
-const featuredSet = "https://soundcloud.com/shef-699974995/psytrance-freestyle-mix-2025-07-13";
+const defaultPreviewTrack = "/audio/shef-psytrance-preview.mp3";
+const defaultFeaturedSet = "https://soundcloud.com/shef-699974995/psytrance-freestyle-mix-2025-07-13";
 const waveformBars = [7, 12, 18, 10, 22, 15, 8, 19, 25, 13, 9, 17, 23, 11, 16, 21, 8, 14, 24, 17, 10, 20, 13, 7];
 
-export function HeroPlayer() {
+type HeroPlayerProps = {
+  title?: string;
+  subtitle?: string;
+  artwork?: string;
+  previewTrack?: string;
+  featuredSet?: string;
+};
+
+export function HeroPlayer({
+  title = "Psytrance Freestyle Mix",
+  subtitle = "SHEF · 2025 preview",
+  artwork = "/images/shef-stems-vault-poster.jpg",
+  previewTrack = defaultPreviewTrack,
+  featuredSet = defaultFeaturedSet,
+}: HeroPlayerProps) {
   const [isHeroVisible, setIsHeroVisible] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -32,7 +46,7 @@ export function HeroPlayer() {
       audio.removeEventListener("ended", handleEnded);
       audioRef.current = null;
     };
-  }, []);
+  }, [previewTrack]);
 
   const togglePlayback = () => {
     const audio = audioRef.current;
@@ -60,10 +74,10 @@ export function HeroPlayer() {
   return (
     <div className={`hero-player${isHeroVisible ? " is-visible" : " is-collapsed"}${isPlaying ? " is-playing" : ""}`}>
       <a className="hero-player-art-link" href={featuredSet} target="_blank" rel="noreferrer" aria-label="Open SHEF's Psytrance Freestyle Mix on SoundCloud">
-        <Image className="hero-player-art" src="/images/shef-stems-vault-poster.jpg" alt="SHEF performing at STEMS Official" width={200} height={200} />
+        <Image className="hero-player-art" src={artwork} alt="SHEF performing at STEMS Official" width={200} height={200} />
       </a>
       <a className="hero-player-copy" href={featuredSet} target="_blank" rel="noreferrer" aria-label="Open SHEF's Psytrance Freestyle Mix on SoundCloud">
-        <strong>Psytrance Freestyle Mix</strong><small>SHEF · 2025 preview</small>
+        <strong>{title}</strong><small>{subtitle}</small>
       </a>
       <span className="hero-player-controls"><button className="hero-player-toggle" type="button" onClick={togglePlayback} aria-label={isPlaying ? "Pause SHEF preview" : "Play SHEF preview"}>{isPlaying ? <Pause size={17} weight="fill" /> : <Play size={17} weight="fill" />}</button></span>
       <span className="hero-player-waveform" aria-hidden="true">{waveformBars.map((height, index) => <i className={isPlaying && index % 2 === 0 ? "is-active" : undefined} style={{ height }} key={`${height}-${index}`} />)}</span>

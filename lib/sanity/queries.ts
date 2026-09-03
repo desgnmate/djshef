@@ -1,0 +1,73 @@
+export const homeQuery = `{
+  "settings": *[_type == "siteSettings"][0]{
+    heroKicker,
+    heroTitle,
+    heroEdition,
+    flavourNotes,
+    "heroBaseImage": heroBaseImage.asset->url,
+    "heroCurtainImage": heroCurtainImage.asset->url,
+    manifestoHeadline,
+    manifestoBody,
+    manifestoRegion,
+    musicHeadline,
+    musicImageCode,
+    "musicImage": musicImage.asset->url,
+    sessionsHeadline,
+    sessionsIntro,
+    sessionsFeaturedLabel,
+    "sessionsVideo": sessionsVideo.asset->url,
+    "sessionsVideoPoster": sessionsVideoPoster.asset->url,
+    sessionsImageCode,
+    aboutHeadline,
+    aboutLead,
+    aboutParagraphs,
+    "aboutImage": aboutImage.asset->url,
+    aboutImageAlt,
+    aboutImageCode,
+    archiveHeadline,
+    archiveDirection,
+    bookingHeadline,
+    "bookingImage": bookingImage.asset->url,
+    bookingImageAlt,
+    footerOrbitHeading,
+    footerOrbitSubline,
+    seoTitle,
+    seoDescription,
+    "seoImage": seoImage.asset->url,
+    socials[]{label, href}
+  },
+  "releases": *[_type == "release"] | order(order asc, year desc){
+    title,
+    year,
+    note,
+    soundcloudUrl,
+    "previewUrl": previewAudio.asset->url,
+    "coverImage": coverImage.asset->url
+  },
+  "appearances": *[_type == "appearance"] | order(order asc, year desc){
+    year,
+    city,
+    venue,
+    note,
+    href
+  },
+  "gallery": *[_type == "galleryItem"] | order(order asc){
+    "src": media.asset->url,
+    alt,
+    code
+  },
+  "pressKit": *[_type == "pressKit"][0]{
+    eyebrow,
+    headline,
+    lead,
+    paragraphs,
+    facts[]{label, value},
+    "portraitOne": portraitOne.asset->url,
+    portraitOneAlt,
+    "portraitTwo": portraitTwo.asset->url,
+    portraitTwoAlt,
+    portraitOneCaption,
+    portraitTwoCaption,
+    promoterNotes[]{label, copy}
+  }
+}`;

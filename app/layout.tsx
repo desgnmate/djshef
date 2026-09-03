@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
+import { draftMode } from "next/headers";
 import { IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
 import { MotionDirector } from "@/components/motion-director";
 import { Navigation } from "@/components/navigation";
+import { VisualEditing } from "next-sanity/visual-editing";
+import { SanityLive } from "@/lib/sanity/live";
+import { getSiteContent } from "@/lib/content";
+import { isSanityConfigured } from "@/lib/sanity/env";
 import "./globals.css";
 
 const display = Space_Grotesk({
@@ -16,25 +21,31 @@ const mono = IBM_Plex_Mono({
   weight: ["400", "500", "600"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://shef.dj"),
-  title: { default: "SHEF — DJ / No Set Menu", template: "%s — SHEF" },
-  description: "Official site for Vietnamese–Australian DJ SHEF. Listen to mixes spanning house, R&B, techno, hard bounce, and psytrance; view the press kit and booking information.",
-  keywords: ["SHEF", "DJ SHEF", "Melbourne DJ", "Vietnamese Australian DJ", "house", "hard bounce", "R&B", "psytrance"],
-  icons: { icon: "/images/shef-mark.svg", apple: "/images/shef-mark.svg" },
-  alternates: { canonical: "/" },
-  openGraph: {
-    title: "SHEF — DJ / No Set Menu",
-    description: "House, bounce, R&B, techno, and psytrance—cooked to the room.",
-    url: "/",
-    siteName: "SHEF",
-    images: [{ url: "/images/shef-drive-1196.jpg", width: 4387, height: 6581, alt: "SHEF" }],
-    type: "website",
-  },
-  twitter: { card: "summary_large_image", title: "SHEF", description: "No set menu.", images: ["/images/shef-drive-1196.jpg"] },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { settings } = await getSiteContent();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://djshef.vercel.app";
+  return {
+    metadataBase: new URL(siteUrl),
+    title: { default: settings.seoTitle, template: "%s — SHEF" },
+    description: settings.seoDescription,
+    keywords: ["SHEF", "DJ SHEF", "Melbourne DJ", "Vietnamese Australian DJ", "house", "hard bounce", "R&B", "psytrance"],
+    icons: { icon: "/images/shef-mark.svg", apple: "/images/shef-mark.svg" },
+    alternates: { canonical: "/" },
+    openGraph: {
+      title: settings.seoTitle,
+      description: settings.seoDescription,
+      url: "/",
+      siteName: "SHEF",
+      images: [{ url: settings.seoImage, width: 4387, height: 6581, alt: "SHEF" }],
+      type: "website",
+    },
+    twitter: { card: "summary_large_image", title: settings.seoTitle, description: settings.seoDescription, images: [settings.seoImage] },
+  };
+}
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const isDraftMode = isSanityConfigured ? (await draftMode()).isEnabled : false;
+
   return (
     <html lang="en" className={`${display.variable} ${mono.variable}`}>
       <body>
@@ -46,6 +57,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <Navigation />
         <MotionDirector />
         {children}
+        {isDraftMode && <SanityLive includeDrafts />}
+        {isDraftMode && <VisualEditing />}
       </body>
     </html>
   );

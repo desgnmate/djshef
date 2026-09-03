@@ -27,6 +27,8 @@ export function Navigation() {
     return () => document.removeEventListener("keydown", closeOnEscape);
   }, [open]);
 
+  if (pathname.startsWith("/studio")) return null;
+
   return (
     <header className={`site-header${isHome ? " home-header" : ""}${open ? " menu-open" : ""}`}>
       <Link href="/" className="wordmark" aria-label="SHEF home" onClick={() => setOpen(false)}>

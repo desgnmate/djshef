@@ -27,3 +27,7 @@ Open `http://localhost:3000`.
 - Add analytics and consent only after the measurement stack is selected.
 
 See `ASSET_SOURCES.md` for the photography, artwork, and public-profile source inventory.
+
+## Content management
+
+Sanity CMS support is included for the homepage, releases, featured sessions, gallery, press kit, and SEO settings. See [`CMS.md`](./CMS.md) for project setup, the one-time content migration, draft previews, and Vercel environment variables.

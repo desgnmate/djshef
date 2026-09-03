@@ -9,6 +9,12 @@ export function MotionDirector() {
   const pathname = usePathname();
 
   useLayoutEffect(() => {
+    if (pathname.startsWith("/studio")) {
+      document.querySelector<HTMLElement>(".page-loader")?.style.setProperty("display", "none");
+      document.querySelector<HTMLElement>(".scroll-progress")?.style.setProperty("display", "none");
+      return;
+    }
+
     gsap.registerPlugin(ScrollTrigger);
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const scope = document.body;
