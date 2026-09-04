@@ -23,6 +23,13 @@ function list(value: unknown) {
   return Array.isArray(value) ? value.filter(isRecord).slice(0, 100) : [];
 }
 
+function cmsSetupError(error: { code?: string; message?: string } | null | undefined) {
+  if (error?.code === "PGRST205") {
+    return "Supabase CMS tables are not set up yet. Apply supabase/migrations/20260903103159_shef_cms.sql in the Supabase SQL Editor, then reload.";
+  }
+  return error?.message ?? "Supabase CMS request failed.";
+}
+
 async function requireAdmin() {
   const user = await getCmsAdminUser();
   if (!user) return null;
@@ -43,7 +50,7 @@ export async function GET() {
   ]);
 
   const firstError = [settings, mixes, appearances, gallery, pressKit].find((result) => result.error)?.error;
-  if (firstError) return Response.json({ error: firstError.message }, { status: 500 });
+  if (firstError) return Response.json({ error: cmsSetupError(firstError) }, { status: firstError.code === "PGRST205" ? 503 : 500 });
 
   return Response.json({
     settings: settings.data?.content ?? {},
@@ -77,7 +84,8 @@ export async function PUT(request: Request) {
   const settingsResult = await supabase.from("site_settings").upsert({ id: "site", content: settings, updated_at: new Date().toISOString() });
   const pressResult = await supabase.from("press_kit").upsert({ id: "press", content: payload.pressKit, updated_at: new Date().toISOString() });
   if (settingsResult.error || pressResult.error) {
-    return Response.json({ error: settingsResult.error?.message ?? pressResult.error?.message }, { status: 500 });
+    const error = settingsResult.error ?? pressResult.error;
+    return Response.json({ error: cmsSetupError(error) }, { status: error?.code === "PGRST205" ? 503 : 500 });
   }
 
   const collectionResults = await Promise.all([
@@ -97,7 +105,7 @@ export async function PUT(request: Request) {
   ]);
 
   const collectionError = collectionResults.find((result) => result.error)?.error;
-  if (collectionError) return Response.json({ error: collectionError.message }, { status: 500 });
+  if (collectionError) return Response.json({ error: cmsSetupError(collectionError) }, { status: collectionError.code === "PGRST205" ? 503 : 500 });
 
   revalidatePath("/");
   revalidatePath("/press-kit");
