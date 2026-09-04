@@ -696,7 +696,7 @@ body:has(.admin-page) .page-loader, body:has(.admin-page) .scroll-progress, body
 .admin-side-foot { display: flex; align-items: center; gap: .45rem; margin-top: auto; color: #8b8178; font-family: var(--font-mono), monospace; font-size: .56rem; text-transform: uppercase; }
 .admin-status-dot { width: .45rem; height: .45rem; border-radius: 50%; background: #6a9f58; box-shadow: 0 0 0 .2rem rgb(106 159 88 / 13%); }
 .admin-main { min-width: 0; }
-.admin-notice { min-height: 2.5rem; display: inline-flex; align-items: center; gap: .55rem; margin-bottom: 1.6rem; padding: .65rem .8rem; border: 1px solid #d0c6bb; background: #f4efe7; color: #756c64; font-family: var(--font-mono), monospace; font-size: .62rem; }
+.admin-notice { position: fixed; z-index: 140; top: 5.25rem; right: clamp(1rem, 2vw, 2.5rem); min-height: 2.5rem; display: inline-flex; align-items: center; gap: .55rem; margin: 0; padding: .65rem .8rem; border: 1px solid #d0c6bb; background: #f4efe7; color: #756c64; font-family: var(--font-mono), monospace; font-size: .62rem; box-shadow: 0 .6rem 1.5rem rgb(16 13 12 / 8%); animation: admin-notice-in .25s ease both; }
 .admin-notice.is-success { border-color: rgb(106 159 88 / 45%); color: #47713a; }
 .admin-notice.is-error { border-color: rgb(217 52 43 / 45%); color: #aa2c26; }
 .admin-page-intro, .admin-section-header { display: flex; align-items: end; justify-content: space-between; gap: 2rem; padding-bottom: 2rem; border-bottom: 1px solid #d0c6bb; }
@@ -802,6 +802,7 @@ body:has(.admin-page) .page-loader, body:has(.admin-page) .scroll-progress, body
 @keyframes admin-spin { to { transform: rotate(360deg); } }
 @keyframes admin-modal-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes admin-modal-rise { from { opacity: 0; transform: translateY(1rem) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes admin-notice-in { from { opacity: 0; transform: translateY(-.35rem); } to { opacity: 1; transform: translateY(0); } }
 
 @media (max-width: 980px) {
   .admin-app-actions .admin-account { display: none; }
@@ -816,6 +817,7 @@ body:has(.admin-page) .page-loader, body:has(.admin-page) .scroll-progress, body
 @media (max-width: 700px) {
   .admin-app-header { min-height: 4.25rem; }
   .admin-app-actions a { display: none; }
+  .admin-notice { top: 4.8rem; right: .65rem; max-width: calc(100vw - 1.3rem); }
   .admin-app-body { display: block; padding-top: 1rem; }
   .admin-sidebar { position: static; min-height: 0; margin-bottom: 2rem; }
   .admin-side-label, .admin-side-foot { display: none; }
