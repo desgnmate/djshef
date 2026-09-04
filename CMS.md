@@ -19,7 +19,7 @@ editor served by the same Next.js deployment.
 
 4. Create the editor account in Supabase Dashboard → Authentication → Users.
    Set its email in `CMS_ADMIN_EMAIL` (comma-separate additional editors if
-   needed). The default Vercel setup uses `hello@desgnmate.com`.
+needed). The deployed setup uses `hello@djshef.com`.
 5. Seed the current SHEF copy, links, and local asset paths once (after the
    migration has been applied):
 
