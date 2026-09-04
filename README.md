@@ -16,7 +16,7 @@ Open `http://localhost:3000`.
 - `/` — artist homepage with music, selected sessions, biography, visual diary, and booking callout
 - `/booking` — a privacy-first form that copies a structured booking brief to the visitor's clipboard
 - `/press-kit` — biography, artist facts, press imagery, promoter checklist, and official links
-- `/admin` — protected Supabase CMS editor (approved account only)
+- `/admin` — protected Supabase CMS management workspace (approved account only)
 - `/privacy` and `/terms` — lightweight legal pages
 - Branded not-found state
 
@@ -31,7 +31,7 @@ See `ASSET_SOURCES.md` for the photography, artwork, and public-profile source i
 
 ## Content management
 
-The site includes a self-hosted Supabase CMS at `/admin` for the homepage,
-releases, featured sessions, gallery, press kit, and SEO settings. See
+The site includes a self-hosted Supabase CMS at `/admin` with visual management
+interfaces for releases, events, and gallery images. See
 [`CMS.md`](./CMS.md) for the one-time database setup, Auth allowlist, and
 editing workflow.
