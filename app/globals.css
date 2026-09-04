@@ -674,7 +674,7 @@ body:has(.admin-page) .page-loader, body:has(.admin-page) .scroll-progress, body
 .admin-login input:focus, .admin-field input:focus, .admin-field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgb(217 52 43 / 13%); }
 .admin-error { margin: 0; color: var(--accent); font-family: var(--font-mono), monospace; font-size: .68rem; }
 .admin-shell { min-height: 100dvh; }
-.admin-app-header { min-height: 4.9rem; display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding: .9rem clamp(1rem, 3vw, 3rem); border-bottom: 1px solid #d0c6bb; background: #f4efe7; }
+.admin-app-header { min-height: 4.35rem; display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding: .75rem clamp(1rem, 2vw, 2.5rem); border-bottom: 1px solid #d0c6bb; background: #f4efe7; }
 .admin-app-brand, .admin-app-actions, .admin-app-actions a, .admin-app-actions button { display: flex; align-items: center; }
 .admin-app-brand { gap: .75rem; }
 .admin-app-brand > div { display: grid; gap: .22rem; }
@@ -684,8 +684,8 @@ body:has(.admin-page) .page-loader, body:has(.admin-page) .scroll-progress, body
 .admin-app-actions a, .admin-app-actions button { gap: .35rem; border: 0; background: transparent; color: inherit; font: inherit; text-transform: inherit; }
 .admin-app-actions a:hover, .admin-app-actions button:hover { color: var(--void); }
 .admin-account { padding-left: 1.15rem; border-left: 1px solid #d0c6bb; }
-.admin-app-body { width: min(100%, 106rem); display: grid; grid-template-columns: 13.5rem minmax(0, 1fr); gap: clamp(2rem, 4vw, 5rem); margin: 0 auto; padding: clamp(2rem, 4vw, 4.5rem) clamp(1rem, 3vw, 3rem) 5rem; }
-.admin-sidebar { position: sticky; top: 2rem; align-self: start; display: flex; flex-direction: column; min-height: calc(100dvh - 8.5rem); }
+.admin-app-body { width: 100%; display: grid; grid-template-columns: 15rem minmax(0, 1fr); gap: clamp(1.5rem, 2.8vw, 3.5rem); margin: 0; padding: clamp(1.5rem, 2.6vw, 3rem) clamp(1rem, 2vw, 2.5rem) 4rem; }
+.admin-sidebar { position: sticky; top: 1.5rem; align-self: start; display: flex; flex-direction: column; min-height: calc(100dvh - 7.5rem); }
 .admin-side-label { margin-bottom: .85rem; color: #8b8178; font-family: var(--font-mono), monospace; font-size: .6rem; letter-spacing: .08em; text-transform: uppercase; }
 .admin-sidebar nav { display: grid; gap: .25rem; }
 .admin-sidebar nav button { display: grid; grid-template-columns: 1.35rem 1fr auto; align-items: center; gap: .55rem; padding: .7rem .7rem; border: 0; border-left: 2px solid transparent; background: transparent; color: #746b63; font-family: var(--font-mono), monospace; font-size: .68rem; text-align: left; text-transform: uppercase; transition: background .2s ease, color .2s ease, border-color .2s ease; }
@@ -700,7 +700,7 @@ body:has(.admin-page) .page-loader, body:has(.admin-page) .scroll-progress, body
 .admin-notice.is-success { border-color: rgb(106 159 88 / 45%); color: #47713a; }
 .admin-notice.is-error { border-color: rgb(217 52 43 / 45%); color: #aa2c26; }
 .admin-page-intro, .admin-section-header { display: flex; align-items: end; justify-content: space-between; gap: 2rem; padding-bottom: 2rem; border-bottom: 1px solid #d0c6bb; }
-.admin-page-intro h1, .admin-section-header h1 { margin: 1.6rem 0 .8rem; font-size: clamp(3.4rem, 7vw, 7.5rem); line-height: .78; letter-spacing: -.075em; font-weight: 500; }
+.admin-page-intro h1, .admin-section-header h1 { margin: 1.2rem 0 .6rem; font-size: clamp(3.4rem, 5.8vw, 6.5rem); line-height: .78; letter-spacing: -.075em; font-weight: 500; }
 .admin-page-intro p, .admin-section-header p { max-width: 34rem; margin: 0; color: #756c64; line-height: 1.45; }
 .admin-button { min-height: 2.7rem; display: inline-flex; align-items: center; justify-content: center; gap: .55rem; padding: .7rem 1rem; border: 1px solid #b8aea4; border-radius: 2px; font-family: var(--font-mono), monospace; font-size: .63rem; text-transform: uppercase; transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease; }
 .admin-button:active { transform: scale(.98); }
@@ -709,26 +709,26 @@ body:has(.admin-page) .page-loader, body:has(.admin-page) .scroll-progress, body
 .admin-button-dark:hover { border-color: var(--accent); background: var(--accent); }
 .admin-button-light { background: transparent; color: var(--void); }
 .admin-button-light:hover { border-color: var(--void); background: var(--void); color: var(--bone); }
-.admin-stat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin: 2rem 0; border: 1px solid #d0c6bb; background: #d0c6bb; }
-.admin-stat-card { min-height: 10.5rem; display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto 1fr auto; gap: .5rem; padding: 1.2rem; border: 0; background: #f4efe7; color: var(--void); text-align: left; transition: background .2s ease; }
+.admin-stat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin: 1.45rem 0; border: 1px solid #d0c6bb; background: #d0c6bb; }
+.admin-stat-card { min-height: 8.4rem; display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto 1fr auto; gap: .5rem; padding: 1rem 1.1rem; border: 0; background: #f4efe7; color: var(--void); text-align: left; transition: background .2s ease; }
 .admin-stat-card:hover { background: #fffaf3; }
 .admin-stat-icon { color: var(--accent); }
 .admin-stat-label { align-self: center; justify-self: end; color: #756c64; font-family: var(--font-mono), monospace; font-size: .61rem; text-transform: uppercase; }
 .admin-stat-card strong { align-self: end; font-size: clamp(2.4rem, 4vw, 4rem); font-weight: 400; letter-spacing: -.08em; line-height: .8; }
 .admin-stat-card small { display: inline-flex; align-items: center; justify-self: end; gap: .25rem; color: #756c64; font-family: var(--font-mono), monospace; font-size: .58rem; text-transform: uppercase; }
-.admin-overview-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(18rem, .9fr); gap: 1.25rem; }
-.admin-card { min-width: 0; padding: 1.25rem; border: 1px solid #d0c6bb; background: #f4efe7; }
+.admin-overview-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(20rem, .9fr); gap: 1rem; }
+.admin-card { min-width: 0; padding: 1.1rem; border: 1px solid #d0c6bb; background: #f4efe7; }
 .admin-card-heading, .admin-form-heading { display: flex; align-items: start; justify-content: space-between; gap: 1rem; }
 .admin-card h2, .admin-form-heading h2 { margin: .75rem 0 0; font-size: clamp(1.35rem, 2.2vw, 2.1rem); font-weight: 500; letter-spacing: -.055em; }
 .admin-text-button { display: inline-flex; align-items: center; gap: .3rem; padding: .1rem 0; border: 0; border-bottom: 1px solid #9b9087; background: transparent; color: #756c64; font-family: var(--font-mono), monospace; font-size: .59rem; text-transform: uppercase; }
 .admin-text-button:hover { color: var(--accent); border-color: var(--accent); }
-.admin-quick-actions { display: grid; margin-top: 2.2rem; border-top: 1px solid #d0c6bb; }
+.admin-quick-actions { display: grid; margin-top: 1.6rem; border-top: 1px solid #d0c6bb; }
 .admin-quick-actions button { display: grid; grid-template-columns: 1.5rem 1fr auto; align-items: center; gap: .7rem; padding: .9rem 0; border: 0; border-bottom: 1px solid #d0c6bb; background: transparent; color: var(--void); text-align: left; }
 .admin-quick-actions button:hover { color: var(--accent); padding-inline: .35rem; }
 .admin-quick-actions span { display: grid; gap: .2rem; }
 .admin-quick-actions strong { font-size: .9rem; font-weight: 500; }
 .admin-quick-actions small { color: #756c64; font-family: var(--font-mono), monospace; font-size: .57rem; text-transform: uppercase; }
-.admin-mini-list { display: grid; margin-top: 2.2rem; border-top: 1px solid #d0c6bb; }
+.admin-mini-list { display: grid; margin-top: 1.6rem; border-top: 1px solid #d0c6bb; }
 .admin-mini-row { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr) auto; align-items: center; gap: .65rem; min-height: 3.55rem; border-bottom: 1px solid #d0c6bb; }
 .admin-mini-row > span, .admin-mini-row > small { color: #756c64; font-family: var(--font-mono), monospace; font-size: .57rem; text-transform: uppercase; }
 .admin-mini-row strong { overflow: hidden; font-size: .9rem; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
