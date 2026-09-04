@@ -125,6 +125,23 @@ export function AdminStudio({ userEmail }: { userEmail: string }) {
     return () => window.clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (!composer) return;
+    const previousOverflow = document.body.style.overflow;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setComposer(null);
+        setEditingId(null);
+      }
+    };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [composer]);
+
   function closeComposer() {
     setComposer(null);
     setEditingId(null);
@@ -311,7 +328,7 @@ function StatusBadge({ published }: { published: boolean }) {
 function GalleryManager({ content, draft, setDraft, composer, editingId, busy, onCreate, onEdit, onDelete, onClose, onSave, onUpload }: { content: CmsContent; draft: GalleryDraft; setDraft: React.Dispatch<React.SetStateAction<GalleryDraft>>; composer: boolean; editingId: string | null; busy: Resource | "upload" | null; onCreate: () => void; onEdit: (item: GalleryItem) => void; onDelete: (id: string, label: string) => void; onClose: () => void; onSave: (event: FormEvent<HTMLFormElement>) => void; onUpload: (event: ChangeEvent<HTMLInputElement>) => void }) {
   return <>
     <SectionHeader eyebrow="Collection / gallery" title="Visual archive." description="Upload a photo, set its caption, and decide when it appears in the public archive." actionLabel="Add image" onAction={onCreate} />
-    {composer && <GalleryForm draft={draft} setDraft={setDraft} editingId={editingId} busy={busy} onClose={onClose} onSave={onSave} onUpload={onUpload} />}
+    {composer && <ModalFrame onClose={onClose}><GalleryForm draft={draft} setDraft={setDraft} editingId={editingId} busy={busy} onClose={onClose} onSave={onSave} onUpload={onUpload} /></ModalFrame>}
     {content.gallery.length ? <div className="admin-gallery-grid">{content.gallery.map((item) => <article className="admin-gallery-card" key={item.id}><div className="admin-gallery-image" style={{ backgroundImage: `url(${JSON.stringify(item.src)})` }}><StatusBadge published={item.published} /><span>{item.code}</span></div><div className="admin-record-meta"><div><strong>{item.alt}</strong><small>{item.src}</small></div><div className="admin-record-actions"><button type="button" aria-label={`Edit ${item.alt}`} onClick={() => onEdit(item)}><PencilSimple size={16} /></button><button type="button" aria-label={`Delete ${item.alt}`} onClick={() => onDelete(item.id, item.alt)}><Trash size={16} /></button></div></div></article>)}</div> : <EmptyCollection icon={<Images size={28} />} title="The archive is empty." description="Add the first image to start building the visual diary." actionLabel="Add gallery image" onAction={onCreate} />}
   </>;
 }
@@ -323,7 +340,7 @@ function GalleryForm({ draft, setDraft, editingId, busy, onClose, onSave, onUplo
 function EventsManager({ content, draft, setDraft, composer, editingId, busy, onCreate, onEdit, onDelete, onClose, onSave }: { content: CmsContent; draft: EventDraft; setDraft: React.Dispatch<React.SetStateAction<EventDraft>>; composer: boolean; editingId: string | null; busy: Resource | "upload" | null; onCreate: () => void; onEdit: (item: EventItem) => void; onDelete: (id: string, label: string) => void; onClose: () => void; onSave: (event: FormEvent<HTMLFormElement>) => void }) {
   return <>
     <SectionHeader eyebrow="Collection / events" title="Put SHEF on the bill." description="Create event entries with the location, venue, details, and link your audience should follow." actionLabel="Add event" onAction={onCreate} />
-    {composer && <EventForm draft={draft} setDraft={setDraft} editingId={editingId} busy={busy} onClose={onClose} onSave={onSave} />}
+    {composer && <ModalFrame onClose={onClose}><EventForm draft={draft} setDraft={setDraft} editingId={editingId} busy={busy} onClose={onClose} onSave={onSave} /></ModalFrame>}
     {content.appearances.length ? <div className="admin-list">{content.appearances.map((item) => <article className="admin-list-row" key={item.id}><div className="admin-list-date"><span>{displayDate(item.year)}</span><StatusBadge published={item.published} /></div><div className="admin-list-main"><strong>{item.city}</strong><span>{item.venue}</span><small>{item.note || "No event details added"}</small></div><div className="admin-list-link">{item.href ? <a href={item.href} target="_blank" rel="noreferrer"><LinkSimple size={15} /> Open link</a> : <span>No link</span>}</div><div className="admin-record-actions"><button type="button" aria-label={`Edit ${item.city}`} onClick={() => onEdit(item)}><PencilSimple size={16} /></button><button type="button" aria-label={`Delete ${item.city}`} onClick={() => onDelete(item.id, item.city)}><Trash size={16} /></button></div></article>)}</div> : <EmptyCollection icon={<CalendarBlank size={28} />} title="No events yet." description="Add an upcoming booking, radio feature, or past highlight." actionLabel="Add event" onAction={onCreate} />}
   </>;
 }
@@ -335,13 +352,17 @@ function EventForm({ draft, setDraft, editingId, busy, onClose, onSave }: { draf
 function MixesManager({ content, draft, setDraft, composer, editingId, busy, onCreate, onEdit, onDelete, onClose, onSave }: { content: CmsContent; draft: ReleaseDraft; setDraft: React.Dispatch<React.SetStateAction<ReleaseDraft>>; composer: boolean; editingId: string | null; busy: Resource | "upload" | null; onCreate: () => void; onEdit: (item: ReleaseItem) => void; onDelete: (id: string, label: string) => void; onClose: () => void; onSave: (event: FormEvent<HTMLFormElement>) => void }) {
   return <>
     <SectionHeader eyebrow="Collection / mixes" title="Keep the heat moving." description="Publish SoundCloud releases and set previews for the hero player." actionLabel="Add mix" onAction={onCreate} />
-    {composer && <ReleaseForm draft={draft} setDraft={setDraft} editingId={editingId} busy={busy} onClose={onClose} onSave={onSave} />}
+    {composer && <ModalFrame onClose={onClose}><ReleaseForm draft={draft} setDraft={setDraft} editingId={editingId} busy={busy} onClose={onClose} onSave={onSave} /></ModalFrame>}
     {content.mixes.length ? <div className="admin-list">{content.mixes.map((item) => <article className="admin-list-row admin-release-row" key={item.id}><div className="admin-release-art" style={{ backgroundImage: item.cover_image ? `url(${JSON.stringify(item.cover_image)})` : undefined }}><MusicNote size={20} /></div><div className="admin-list-main"><strong>{item.title}</strong><span>{item.year} · {item.note}</span><small>{item.preview_url ? "Hero preview connected" : "No hero preview"}</small></div><div className="admin-list-link">{item.href ? <a href={item.href} target="_blank" rel="noreferrer"><LinkSimple size={15} /> SoundCloud</a> : <span>No link</span>}</div><StatusBadge published={item.published} /><div className="admin-record-actions"><button type="button" aria-label={`Edit ${item.title}`} onClick={() => onEdit(item)}><PencilSimple size={16} /></button><button type="button" aria-label={`Delete ${item.title}`} onClick={() => onDelete(item.id, item.title)}><Trash size={16} /></button></div></article>)}</div> : <EmptyCollection icon={<MusicNote size={28} />} title="No mixes yet." description="Add a SoundCloud set and connect an optional preview for the hero player." actionLabel="Add mix" onAction={onCreate} />}
   </>;
 }
 
 function ReleaseForm({ draft, setDraft, editingId, busy, onClose, onSave }: { draft: ReleaseDraft; setDraft: React.Dispatch<React.SetStateAction<ReleaseDraft>>; editingId: string | null; busy: Resource | "upload" | null; onClose: () => void; onSave: (event: FormEvent<HTMLFormElement>) => void }) {
   return <form className="admin-editor-card" onSubmit={onSave}><div className="admin-form-heading"><div><span className="eyebrow">{editingId ? "Edit mix" : "New mix"}</span><h2>{editingId ? "Refine the release." : "Add a fresh set."}</h2></div><button className="admin-close-button" type="button" aria-label="Close form" onClick={onClose}><X size={20} /></button></div><div className="admin-field-grid"><label className="admin-field"><span>Year</span><input value={draft.year} onChange={(event) => setDraft((current) => ({ ...current, year: event.target.value }))} placeholder="2026" required /></label><label className="admin-field"><span>Title</span><input value={draft.title} onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))} placeholder="Psytrance Freestyle Mix" required /></label><label className="admin-field admin-field-wide"><span>SoundCloud link</span><input type="url" value={draft.href} onChange={(event) => setDraft((current) => ({ ...current, href: event.target.value }))} placeholder="https://soundcloud.com/…" required /></label><label className="admin-field"><span>Short note</span><input value={draft.note} onChange={(event) => setDraft((current) => ({ ...current, note: event.target.value }))} placeholder="Psytrance · freestyle session" /></label><label className="admin-field"><span>Hero preview URL</span><input value={draft.previewUrl} onChange={(event) => setDraft((current) => ({ ...current, previewUrl: event.target.value }))} placeholder="/audio/preview.mp3" /></label><label className="admin-field"><span>Cover image URL</span><input value={draft.coverImage} onChange={(event) => setDraft((current) => ({ ...current, coverImage: event.target.value }))} placeholder="/images/cover.jpg" /></label></div><PublishToggle published={draft.published} onChange={(published) => setDraft((current) => ({ ...current, published }))} /><div className="admin-form-actions"><button className="admin-button admin-button-dark" type="submit" disabled={busy === "release"}>{busy === "release" ? <SpinnerGap size={17} className="admin-spin" /> : <Check size={17} />} {editingId ? "Save changes" : "Publish mix"}</button><button className="admin-button admin-button-light" type="button" onClick={onClose}>Cancel</button></div></form>;
+}
+
+function ModalFrame({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+  return <div className="admin-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}><div className="admin-modal" role="dialog" aria-modal="true" onMouseDown={(event) => event.stopPropagation()}>{children}</div></div>;
 }
 
 function PublishToggle({ published, onChange }: { published: boolean; onChange: (published: boolean) => void }) {

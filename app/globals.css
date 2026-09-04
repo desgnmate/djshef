@@ -736,7 +736,9 @@ body:has(.admin-page) .page-loader, body:has(.admin-page) .scroll-progress, body
 .admin-muted { color: #756c64; font-size: .85rem; line-height: 1.45; }
 .admin-section-header { margin-bottom: 2rem; }
 .admin-section-header p { max-width: 38rem; }
-.admin-editor-card { margin-bottom: 2rem; padding: clamp(1rem, 2vw, 1.5rem); border: 1px solid #c6b9ad; background: #f4efe7; }
+.admin-modal-backdrop { position: fixed; z-index: 160; inset: 0; display: flex; align-items: center; justify-content: center; padding: clamp(.5rem, 1.5vw, 1.5rem); background: rgb(16 13 12 / 38%); animation: admin-modal-fade .2s ease both; }
+.admin-modal { width: min(100%, 98rem); max-height: calc(100dvh - clamp(1rem, 3vw, 3rem)); overflow-y: auto; border: 1px solid #b8aea4; background: #f4efe7; box-shadow: 0 1.5rem 5rem rgb(16 13 12 / 24%); animation: admin-modal-rise .28s cubic-bezier(.2,.8,.2,1) both; }
+.admin-editor-card { margin: 0; padding: clamp(1rem, 2vw, 1.5rem); border: 0; background: transparent; }
 .admin-form-heading { padding-bottom: 1.2rem; border-bottom: 1px solid #d0c6bb; }
 .admin-close-button { display: grid; place-items: center; padding: .2rem; border: 0; background: transparent; color: #756c64; }
 .admin-close-button:hover { color: var(--accent); }
@@ -798,6 +800,8 @@ body:has(.admin-page) .page-loader, body:has(.admin-page) .scroll-progress, body
 .admin-loading { min-height: 24rem; display: grid; place-items: center; gap: .7rem; color: #756c64; font-family: var(--font-mono), monospace; font-size: .65rem; text-transform: uppercase; }
 .admin-spin { animation: admin-spin .8s linear infinite; }
 @keyframes admin-spin { to { transform: rotate(360deg); } }
+@keyframes admin-modal-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes admin-modal-rise { from { opacity: 0; transform: translateY(1rem) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
 @media (max-width: 980px) {
   .admin-app-actions .admin-account { display: none; }
@@ -824,6 +828,8 @@ body:has(.admin-page) .page-loader, body:has(.admin-page) .scroll-progress, body
   .admin-stat-grid { grid-template-columns: 1fr; }
   .admin-stat-card { min-height: 7.5rem; }
   .admin-form-layout { grid-template-columns: 1fr; }
+  .admin-modal-backdrop { align-items: end; padding: .45rem; }
+  .admin-modal { max-height: calc(100dvh - .9rem); }
   .admin-form-preview { min-height: 14rem; }
   .admin-field-row, .admin-field-grid { grid-template-columns: 1fr; }
   .admin-field-wide { grid-column: auto; }
