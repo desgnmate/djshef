@@ -165,7 +165,7 @@ export default async function Home() {
           <div className="footer-follow"><span className="eyebrow">Follow</span>{socials.map((social) => <a href={social.href} target="_blank" rel="noreferrer" key={social.label}>{social.label} <ArrowUpRight /></a>)}</div>
           <div className="footer-orbit"><span className="eyebrow">Orbit</span><strong>{settings.footerOrbitHeading}</strong><small>{settings.footerOrbitSubline}</small></div>
         </div>
-        <div className="footer-bottom"><span>© 2026 SHEF</span><span>Cook good · eat good</span><span><Link href="/privacy">Privacy</Link> · <Link href="/terms">Terms</Link></span></div>
+        <div className="footer-bottom"><span>© 2026 SHEF</span><span>Sound on · lights low</span><span><Link href="/privacy">Privacy</Link> · <Link href="/terms">Terms</Link></span></div>
       </footer>
     </main>
   );
