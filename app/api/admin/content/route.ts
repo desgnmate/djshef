@@ -2,13 +2,13 @@ import { revalidatePath } from "next/cache";
 import { getCmsAdminUser } from "@/lib/supabase/auth";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
-type CmsPayload = {
-  settings?: Record<string, unknown>;
-  mixes?: Array<Record<string, unknown>>;
-  appearances?: Array<Record<string, unknown>>;
-  gallery?: Array<Record<string, unknown>>;
-  socials?: Array<Record<string, unknown>>;
-  pressKit?: Record<string, unknown>;
+type Resource = "gallery" | "event" | "release";
+type TableName = "gallery_items" | "appearances" | "releases";
+
+const tables: Record<Resource, TableName> = {
+  gallery: "gallery_items",
+  event: "appearances",
+  release: "releases",
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -19,21 +19,42 @@ function text(value: unknown, fallback = "") {
   return typeof value === "string" ? value.trim().slice(0, 2000) : fallback;
 }
 
-function list(value: unknown) {
-  return Array.isArray(value) ? value.filter(isRecord).slice(0, 100) : [];
+function has(data: Record<string, unknown>, key: string) {
+  return Object.prototype.hasOwnProperty.call(data, key);
+}
+
+function safeUrl(value: unknown) {
+  const candidate = text(value);
+  if (!candidate) return "";
+  if (candidate.startsWith("/")) return candidate;
+  try {
+    const url = new URL(candidate);
+    return url.protocol === "https:" || url.protocol === "http:" ? candidate : "";
+  } catch {
+    return "";
+  }
+}
+
+function bool(value: unknown, fallback = true) {
+  return typeof value === "boolean" ? value : fallback;
+}
+
+function resourceFrom(value: unknown): Resource | null {
+  if (value === "gallery" || value === "event" || value === "release") return value;
+  if (value === "events") return "event";
+  if (value === "mixes" || value === "releases") return "release";
+  return null;
 }
 
 function cmsSetupError(error: { code?: string; message?: string } | null | undefined) {
   if (error?.code === "PGRST205") {
-    return "Supabase CMS tables are not set up yet. Apply supabase/migrations/20260903103159_shef_cms.sql in the Supabase SQL Editor, then reload.";
+    return "Supabase CMS tables are not set up yet. Apply the migration in supabase/migrations, then reload.";
   }
   return error?.message ?? "Supabase CMS request failed.";
 }
 
 async function requireAdmin() {
-  const user = await getCmsAdminUser();
-  if (!user) return null;
-  return user;
+  return getCmsAdminUser();
 }
 
 export async function GET() {
@@ -52,78 +73,150 @@ export async function GET() {
   const firstError = [settings, mixes, appearances, gallery, pressKit].find((result) => result.error)?.error;
   if (firstError) return Response.json({ error: cmsSetupError(firstError) }, { status: firstError.code === "PGRST205" ? 503 : 500 });
 
+  const settingsContent = isRecord(settings.data?.content) ? settings.data.content : {};
   return Response.json({
-    settings: settings.data?.content ?? {},
+    settings: settingsContent,
     mixes: mixes.data ?? [],
     appearances: appearances.data ?? [],
     gallery: gallery.data ?? [],
-    socials: isRecord(settings.data?.content) && Array.isArray(settings.data.content.socials) ? settings.data.content.socials : [],
+    socials: Array.isArray(settingsContent.socials) ? settingsContent.socials : [],
     pressKit: pressKit.data?.content ?? {},
   });
 }
 
-export async function PUT(request: Request) {
+export async function POST(request: Request) {
   const user = await requireAdmin();
   if (!user) return Response.json({ error: "Sign in with an approved CMS account." }, { status: 401 });
 
-  let payload: CmsPayload;
-  try {
-    const body = await request.json();
-    if (!isRecord(body)) throw new Error("Content must be a JSON object.");
-    payload = body as CmsPayload;
-  } catch (error) {
-    return Response.json({ error: error instanceof Error ? error.message : "Invalid JSON." }, { status: 400 });
-  }
+  const parsed = await readBody(request);
+  if (!parsed.ok) return parsed.response;
+  const resource = resourceFrom(parsed.body.resource);
+  if (!resource) return Response.json({ error: "Choose a valid CMS collection." }, { status: 400 });
+  if (!isRecord(parsed.body.data)) return Response.json({ error: "Add the fields for this item before saving." }, { status: 400 });
 
-  if (!isRecord(payload.settings) || !isRecord(payload.pressKit)) {
-    return Response.json({ error: "The JSON must include settings and pressKit objects." }, { status: 400 });
-  }
+  const row = normalizeRow(resource, parsed.body.data, false);
+  if (!row.ok) return Response.json({ error: row.error }, { status: 400 });
 
   const supabase = createSupabaseAdminClient();
-  const settings = { ...payload.settings, socials: list(payload.socials ?? payload.settings.socials) };
-  const settingsResult = await supabase.from("site_settings").upsert({ id: "site", content: settings, updated_at: new Date().toISOString() });
-  const pressResult = await supabase.from("press_kit").upsert({ id: "press", content: payload.pressKit, updated_at: new Date().toISOString() });
-  if (settingsResult.error || pressResult.error) {
-    const error = settingsResult.error ?? pressResult.error;
-    return Response.json({ error: cmsSetupError(error) }, { status: error?.code === "PGRST205" ? 503 : 500 });
-  }
+  const sortOrder = await nextSortOrder(supabase, tables[resource]);
+  if (sortOrder.error) return Response.json({ error: cmsSetupError(sortOrder.error) }, { status: 500 });
 
-  const collectionResults = await Promise.all([
-    replaceRows(supabase, "releases", list(payload.mixes).map((item, index) => ({
-      year: text(item.year, "2026"), title: text(item.title, "SHEF release"), note: text(item.note, "SHEF session"),
-      href: text(item.href ?? item.soundcloudUrl), preview_url: text(item.previewUrl ?? item.preview_url) || null,
-      cover_image: text(item.coverImage ?? item.cover_image) || null, sort_order: index, published: item.published !== false,
-    }))),
-    replaceRows(supabase, "appearances", list(payload.appearances).map((item, index) => ({
-      year: text(item.year, "2026"), city: text(item.city, "Melbourne"), venue: text(item.venue, "Live session"),
-      note: text(item.note, "Featured set"), href: text(item.href), sort_order: index, published: item.published !== false,
-    }))),
-    replaceRows(supabase, "gallery_items", list(payload.gallery).map((item, index) => ({
-      src: text(item.src), alt: text(item.alt, "SHEF archive image"), code: text(item.code, "SHEF / ARCHIVE"),
-      sort_order: index, published: item.published !== false,
-    }))),
-  ]);
+  const result = await supabase.from(tables[resource]).insert({ ...row.value, sort_order: sortOrder.value }).select("*").single();
+  if (result.error) return Response.json({ error: cmsSetupError(result.error) }, { status: result.error.code === "PGRST205" ? 503 : 500 });
 
-  const collectionError = collectionResults.find((result) => result.error)?.error;
-  if (collectionError) return Response.json({ error: cmsSetupError(collectionError) }, { status: collectionError.code === "PGRST205" ? 503 : 500 });
-
-  revalidatePath("/");
-  revalidatePath("/press-kit");
-  return Response.json({ saved: true, updatedBy: user.email });
+  revalidateSite();
+  return Response.json({ item: result.data, saved: true });
 }
 
-async function replaceRows(
-  supabase: ReturnType<typeof createSupabaseAdminClient>,
-  table: "releases" | "appearances" | "gallery_items",
-  rows: Array<Record<string, unknown>>,
-) {
-  const existing = await supabase.from(table).select("id");
-  if (existing.error) return existing;
-  const ids = (existing.data ?? []).map((row) => row.id).filter((id): id is string => typeof id === "string");
-  if (ids.length) {
-    const deleted = await supabase.from(table).delete().in("id", ids);
-    if (deleted.error) return deleted;
+export async function PATCH(request: Request) {
+  return updateItem(request);
+}
+
+export async function PUT(request: Request) {
+  return updateItem(request);
+}
+
+async function updateItem(request: Request) {
+  const user = await requireAdmin();
+  if (!user) return Response.json({ error: "Sign in with an approved CMS account." }, { status: 401 });
+
+  const parsed = await readBody(request);
+  if (!parsed.ok) return parsed.response;
+  const resource = resourceFrom(parsed.body.resource);
+  const id = text(parsed.body.id);
+  if (!resource || !id) return Response.json({ error: "A collection and item id are required." }, { status: 400 });
+  if (!isRecord(parsed.body.data)) return Response.json({ error: "Add the fields for this item before saving." }, { status: 400 });
+
+  const row = normalizeRow(resource, parsed.body.data, true);
+  if (!row.ok) return Response.json({ error: row.error }, { status: 400 });
+
+  const supabase = createSupabaseAdminClient();
+  const result = await supabase.from(tables[resource]).update({ ...row.value, updated_at: new Date().toISOString() }).eq("id", id).select("*").single();
+  if (result.error) return Response.json({ error: result.error.code === "PGRST116" ? "That item no longer exists." : cmsSetupError(result.error) }, { status: result.error.code === "PGRST205" ? 503 : 500 });
+
+  revalidateSite();
+  return Response.json({ item: result.data, saved: true });
+}
+
+export async function DELETE(request: Request) {
+  const user = await requireAdmin();
+  if (!user) return Response.json({ error: "Sign in with an approved CMS account." }, { status: 401 });
+
+  const parsed = await readBody(request);
+  if (!parsed.ok) return parsed.response;
+  const resource = resourceFrom(parsed.body.resource);
+  const id = text(parsed.body.id);
+  if (!resource || !id) return Response.json({ error: "A collection and item id are required." }, { status: 400 });
+
+  const supabase = createSupabaseAdminClient();
+  const result = await supabase.from(tables[resource]).delete().eq("id", id);
+  if (result.error) return Response.json({ error: cmsSetupError(result.error) }, { status: result.error.code === "PGRST205" ? 503 : 500 });
+
+  revalidateSite();
+  return Response.json({ deleted: true });
+}
+
+async function readBody(request: Request): Promise<{ ok: true; body: Record<string, unknown> } | { ok: false; response: Response }> {
+  try {
+    const body = await request.json();
+    if (!isRecord(body)) return { ok: false, response: Response.json({ error: "Request body must be an object." }, { status: 400 }) };
+    return { ok: true, body };
+  } catch {
+    return { ok: false, response: Response.json({ error: "Request body must be valid JSON." }, { status: 400 }) };
   }
-  if (!rows.length) return { data: [], error: null };
-  return supabase.from(table).insert(rows);
+}
+
+function normalizeRow(resource: Resource, data: Record<string, unknown>, partial: boolean): { ok: true; value: Record<string, unknown> } | { ok: false; error: string } {
+  if (resource === "gallery") {
+    const row: Record<string, unknown> = {};
+    if (!partial || has(data, "src")) {
+      const src = safeUrl(data.src);
+      if (!src) return { ok: false, error: "Gallery items need an image URL or a public path such as /images/photo.jpg." };
+      row.src = src;
+    }
+    if (!partial || has(data, "alt")) row.alt = text(data.alt, "SHEF archive image");
+    if (!partial || has(data, "code")) row.code = text(data.code, "SHEF / ARCHIVE");
+    if (!partial || has(data, "published")) row.published = bool(data.published, true);
+    return { ok: true, value: row };
+  }
+
+  if (resource === "event") {
+    const row: Record<string, unknown> = {};
+    if (!partial || has(data, "year")) row.year = text(data.year, "2026");
+    if (!partial || has(data, "city")) {
+      row.city = text(data.city);
+      if (!row.city) return { ok: false, error: "Events need a city or event location." };
+    }
+    if (!partial || has(data, "venue")) row.venue = text(data.venue, "Live session");
+    if (!partial || has(data, "note")) row.note = text(data.note, "Featured set");
+    if (!partial || has(data, "href")) row.href = safeUrl(data.href);
+    if (!partial || has(data, "published")) row.published = bool(data.published, true);
+    return { ok: true, value: row };
+  }
+
+  const row: Record<string, unknown> = {};
+  if (!partial || has(data, "year")) row.year = text(data.year, "2026");
+  if (!partial || has(data, "title")) {
+    row.title = text(data.title);
+    if (!row.title) return { ok: false, error: "Releases need a title." };
+  }
+  if (!partial || has(data, "note")) row.note = text(data.note, "SHEF session");
+  if (!partial || has(data, "href")) {
+    row.href = safeUrl(data.href);
+    if (!row.href) return { ok: false, error: "Releases need a valid SoundCloud or external link." };
+  }
+  if (!partial || has(data, "previewUrl")) row.preview_url = safeUrl(data.previewUrl) || null;
+  if (!partial || has(data, "coverImage")) row.cover_image = safeUrl(data.coverImage) || null;
+  if (!partial || has(data, "published")) row.published = bool(data.published, true);
+  return { ok: true, value: row };
+}
+
+async function nextSortOrder(supabase: ReturnType<typeof createSupabaseAdminClient>, table: TableName) {
+  const result = await supabase.from(table).select("sort_order").order("sort_order", { ascending: false }).limit(1).maybeSingle();
+  return { value: (result.data?.sort_order ?? -1) + 1, error: result.error };
+}
+
+function revalidateSite() {
+  revalidatePath("/");
+  revalidatePath("/press-kit");
 }

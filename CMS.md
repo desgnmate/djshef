@@ -1,8 +1,8 @@
 # SHEF self-hosted CMS
 
-The site now uses Supabase for content storage and Auth. There is no hosted
-studio or third-party editor in the app: the private `/admin` page is a small
-editor served by the same Next.js deployment.
+The site uses Supabase for content storage and Auth. There is no hosted studio
+or third-party editor in the app: the private `/admin` page is a management
+webapp served by the same Next.js deployment.
 
 ## One-time setup
 
@@ -27,15 +27,21 @@ needed). The deployed setup uses `hello@djshef.com`.
 
 ## Editing content
 
-Open `/admin`, sign in with the approved Supabase Auth account, and edit the
-single JSON document. The editor keeps the content model portable and makes it
-easy to export or version-control. Keep the top-level keys (`settings`,
-`mixes`, `appearances`, `gallery`, `socials`, and `pressKit`) intact. Set a row's
-`published` value to `false` to hide it from the public site. Saving revalidates
-the home page and press kit immediately.
+Open `/admin` and sign in with the approved Supabase Auth account. The
+management interface has dedicated sections for:
 
-Images, video, and audio continue to use the checked-in files in `public/`.
-Supabase Storage can be added later without changing the public content API.
+- **Gallery** — upload an image to the `shef-media` Supabase Storage bucket or
+  paste a public image URL, add alt text and an archive label, then publish or
+  keep it as a draft.
+- **Events** — create and edit bookings, tour stops, and radio features with a
+  date or year, city, venue, event details, and an external link.
+- **Mixes** — publish a SoundCloud release with its note, hero preview audio,
+  and cover artwork.
+
+Each item can be edited, unpublished, or deleted from its collection. Changes
+revalidate the public home page and press kit immediately. Existing assets in
+`public/` remain supported, so an image can still be entered as a path such as
+`/images/photo.jpg`.
 
 ## Security model
 
