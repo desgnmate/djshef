@@ -3,7 +3,7 @@ import { AdminStudio } from "@/components/admin-studio";
 import { getCmsAdminUser } from "@/lib/supabase/auth";
 
 export const metadata = {
-  title: "CMS — SHEF",
+  title: "SHEF Content Management",
   robots: { index: false, follow: false },
 };
 

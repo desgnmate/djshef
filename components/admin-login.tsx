@@ -25,14 +25,14 @@ export function AdminLogin() {
 
   return (
     <section className="admin-login" aria-labelledby="admin-login-title">
-      <p className="eyebrow">SHEF / private kitchen</p>
-      <h1 id="admin-login-title">Content<br /><em>access.</em></h1>
-      <p className="admin-login-copy">Sign in with the approved Supabase account to edit the site content.</p>
+      <div className="admin-login-brand"><span className="admin-app-mark">S</span><div><span className="eyebrow">SHEF / website admin</span><strong>Content management</strong></div></div>
+      <h1 id="admin-login-title">Sign in to<br /><em>continue.</em></h1>
+      <p className="admin-login-copy">Use your approved admin account to manage the content published on the SHEF website.</p>
       <form onSubmit={submit}>
         <label><span>Email</span><input type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} required /></label>
         <label><span>Password</span><input type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required /></label>
         {error && <p className="admin-error" role="alert">{error}</p>}
-        <button className="button button-solid" type="submit" disabled={busy}>{busy ? "Opening…" : "Open CMS ↗"}</button>
+        <button className="admin-button admin-button-dark" type="submit" disabled={busy}>{busy ? "Signing in…" : "Continue to CMS"}</button>
       </form>
     </section>
   );
