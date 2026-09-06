@@ -112,7 +112,7 @@ export function AdminStudio({ userEmail }: { userEmail: string }) {
     try {
       const next = await fetchCmsContent();
       setContent(next);
-      if (!options.silent) setNotice({ tone: "success", text: "Content is up to date." });
+      if (!options.silent) setNotice(null);
     } catch (error) {
       setNotice({ tone: "error", text: error instanceof Error ? error.message : "Could not load content." });
     } finally {
