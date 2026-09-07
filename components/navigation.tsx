@@ -17,15 +17,24 @@ export function Navigation() {
   const isHome = pathname === "/";
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      document.body.style.overflow = "";
+      return;
+    }
+
+    document.body.style.overflow = "hidden";
 
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") setOpen(false);
     };
 
     document.addEventListener("keydown", closeOnEscape);
-    return () => document.removeEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("keydown", closeOnEscape);
+      document.body.style.overflow = "";
+    };
   }, [open]);
+
 
   if (pathname.startsWith("/admin")) return null;
 

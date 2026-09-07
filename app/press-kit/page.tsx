@@ -5,7 +5,25 @@ import { PrintButton } from "@/components/print-button";
 import { ArrowUpRight } from "@/components/icons";
 import { getSiteContent } from "@/lib/content";
 
-export const metadata: Metadata = { title: "Press kit", description: "Official SHEF biography, artist profile, selected credits, press images, and booking information." };
+export const metadata: Metadata = {
+  title: "Press kit",
+  description: "Official SHEF biography, artist profile, selected credits, press images, and booking information.",
+  alternates: { canonical: "/press-kit" },
+  openGraph: {
+    title: "Press kit — SHEF",
+    description: "Official SHEF biography, artist profile, selected credits, press images, and booking information.",
+    url: "/press-kit",
+    siteName: "SHEF",
+    type: "profile",
+    images: [{ url: "/images/shef-drive-1247.jpg", width: 1200, height: 630, alt: "SHEF Press Portrait" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Press kit — SHEF",
+    description: "Official SHEF biography, artist profile, selected credits, press images, and booking information.",
+    images: ["/images/shef-drive-1247.jpg"],
+  },
+};
 
 export default async function PressKitPage() {
   const site = await getSiteContent();
@@ -31,8 +49,8 @@ export default async function PressKitPage() {
         <div className="fact-grid">{pressKit.facts.map((fact) => <div key={fact.label}><span>{fact.label}</span><strong>{fact.value}</strong></div>)}</div>
       </section>
       <section className="press-images">
-        <figure><Image src={pressKit.portraitOne} alt={pressKit.portraitOneAlt} fill sizes="50vw" /><figcaption>{pressKit.portraitOneCaption}</figcaption></figure>
-        <figure><Image src={pressKit.portraitTwo} alt={pressKit.portraitTwoAlt} fill sizes="50vw" /><figcaption>{pressKit.portraitTwoCaption}</figcaption></figure>
+        <figure><Image src={pressKit.portraitOne} alt={pressKit.portraitOneAlt} fill sizes="(max-width: 820px) 100vw, 50vw" /><figcaption>{pressKit.portraitOneCaption}</figcaption></figure>
+        <figure><Image src={pressKit.portraitTwo} alt={pressKit.portraitTwoAlt} fill sizes="(max-width: 820px) 100vw, 50vw" /><figcaption>{pressKit.portraitTwoCaption}</figcaption></figure>
       </section>
       <section className="rider-section section-pad">
         <div className="rider-title"><div className="section-code"><span>003</span><span>Promoter notes</span></div><h2>Before<br />service</h2><p>SHEF&apos;s current technical requirements are shared directly with confirmed promoters. Include the details below with the first enquiry.</p></div>

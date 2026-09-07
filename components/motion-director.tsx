@@ -23,9 +23,9 @@ export function MotionDirector() {
       gsap.set(".site-header", { autoAlpha: 1 });
       gsap.to(".page-loader", {
         autoAlpha: 0,
-        duration: reduceMotion ? 0.01 : 0.28,
+        duration: reduceMotion ? 0.01 : 0.25,
         ease: "power2.out",
-        delay: reduceMotion ? 0 : 1.18,
+        delay: reduceMotion ? 0 : 0.32,
         onComplete: () => gsap.set(".page-loader", { display: "none" }),
       });
 
@@ -33,28 +33,43 @@ export function MotionDirector() {
 
       gsap.from(".hero-line > span", {
         yPercent: 112,
-        duration: 1.15,
-        stagger: 0.1,
-        delay: 1.02,
+        duration: 0.95,
+        stagger: 0.08,
+        delay: 0.22,
         ease: "power4.out",
       });
 
       gsap.from(".hero-chrome > *, .hero-lockup > :not(.hero-title)", {
         opacity: 0,
         y: 18,
-        duration: 0.7,
-        stagger: 0.08,
-        delay: 1.28,
+        duration: 0.6,
+        stagger: 0.06,
+        delay: 0.38,
         ease: "power3.out",
+      });
+
+      // Pause infinite hero curtain clip-path animation when scrolled out of view
+      ScrollTrigger.create({
+        trigger: ".hero",
+        start: "top top",
+        end: "bottom top",
+        onLeave: () => {
+          const curtain = document.querySelector<HTMLElement>(".hero-image-curtain");
+          if (curtain) curtain.style.animationPlayState = "paused";
+        },
+        onEnterBack: () => {
+          const curtain = document.querySelector<HTMLElement>(".hero-image-curtain");
+          if (curtain) curtain.style.animationPlayState = "running";
+        },
       });
 
       gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((element) => {
         gsap.from(element, {
           opacity: 0,
-          y: 56,
-          duration: 1,
+          y: 44,
+          duration: 0.85,
           ease: "power3.out",
-          scrollTrigger: { trigger: element, start: "top 86%", once: true },
+          scrollTrigger: { trigger: element, start: "top 88%", once: true },
         });
       });
 
@@ -66,6 +81,7 @@ export function MotionDirector() {
           yPercent: isHero ? 2.5 : 6,
           scale: 1,
           ease: "none",
+          force3D: true,
           scrollTrigger: { trigger: element, start: "top bottom", end: "bottom top", scrub: true },
         });
       });
@@ -74,29 +90,32 @@ export function MotionDirector() {
         gsap.from(row, {
           opacity: 0,
           x: index % 2 === 0 ? -24 : 24,
-          duration: 0.7,
+          duration: 0.6,
           ease: "power2.out",
-          scrollTrigger: { trigger: row, start: "top 90%", once: true },
+          scrollTrigger: { trigger: row, start: "top 92%", once: true },
         });
       });
 
-      const gallery = document.querySelector<HTMLElement>(".archive-section");
-      const track = document.querySelector<HTMLElement>(".archive-track");
-      if (gallery && track && window.innerWidth > 820) {
-        const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
-        gsap.to(track, {
-          x: () => -distance(),
-          ease: "none",
-          scrollTrigger: {
-            trigger: gallery,
-            start: "top top",
-            end: () => `+=${distance()}`,
-            pin: true,
-            scrub: 0.65,
-            invalidateOnRefresh: true,
-          },
-        });
-      }
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 821px)", () => {
+        const gallery = document.querySelector<HTMLElement>(".archive-section");
+        const track = document.querySelector<HTMLElement>(".archive-track");
+        if (gallery && track) {
+          const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
+          gsap.to(track, {
+            x: () => -distance(),
+            ease: "none",
+            scrollTrigger: {
+              trigger: gallery,
+              start: "top top",
+              end: () => `+=${distance()}`,
+              pin: true,
+              scrub: 0.65,
+              invalidateOnRefresh: true,
+            },
+          });
+        }
+      });
 
       gsap.to(".scroll-progress", {
         scaleX: 1,

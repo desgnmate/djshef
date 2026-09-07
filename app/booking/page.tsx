@@ -4,7 +4,25 @@ import Link from "next/link";
 import { BookingForm } from "@/components/booking-form";
 import { ArrowUpRight } from "@/components/icons";
 
-export const metadata: Metadata = { title: "Booking", description: "Prepare a clear booking brief for SHEF for club, festival, fashion, private, and brand events." };
+export const metadata: Metadata = {
+  title: "Booking",
+  description: "Prepare a clear booking brief for SHEF for club, festival, fashion, private, and brand events.",
+  alternates: { canonical: "/booking" },
+  openGraph: {
+    title: "Booking — SHEF",
+    description: "Prepare a clear booking brief for SHEF for club, festival, fashion, private, and brand events.",
+    url: "/booking",
+    siteName: "SHEF",
+    type: "website",
+    images: [{ url: "/images/shef-drive-1196.jpg", width: 1200, height: 630, alt: "SHEF Booking" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Booking — SHEF",
+    description: "Prepare a clear booking brief for SHEF for club, festival, fashion, private, and brand events.",
+    images: ["/images/shef-drive-1196.jpg"],
+  },
+};
 
 export default function BookingPage() {
   return (

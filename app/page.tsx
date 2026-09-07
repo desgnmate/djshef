@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { siInstagram, siSoundcloud } from "simple-icons";
@@ -6,18 +7,56 @@ import { HeroPlayer } from "@/components/hero-player";
 import { ArrowRight, ArrowUpRight } from "@/components/icons";
 import { getSiteContent } from "@/lib/content";
 
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
+
 export default async function Home() {
   const site = await getSiteContent();
   const { settings, mixes, appearances, gallery, socials } = site;
   const featuredMix = mixes[3] ?? mixes[0];
   const socialLink = (label: string, fallback: string) => socials.find((social) => social.label.toLowerCase() === label.toLowerCase())?.href ?? fallback;
 
+  const eventsJsonLd = appearances.map((event) => ({
+    "@context": "https://schema.org",
+    "@type": "MusicEvent",
+    name: `${event.city} — ${event.venue}`,
+    description: event.note,
+    startDate: event.year,
+    location: {
+      "@type": "Place",
+      name: event.venue,
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: event.city,
+      },
+    },
+    performer: {
+      "@type": "Person",
+      name: "SHEF",
+    },
+    url: event.href,
+  }));
+
   return (
     <main id="main">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(eventsJsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
+      <HeroPlayer
+        title={featuredMix?.title}
+        subtitle={featuredMix ? `${featuredMix.note} · ${featuredMix.year} preview` : undefined}
+        artwork={featuredMix?.coverImage}
+        previewTrack={featuredMix?.previewUrl}
+        featuredSet={featuredMix?.href}
+      />
       <section className="hero" id="top" aria-labelledby="hero-title">
         <div className="hero-media" data-parallax="hero">
           <Image className="hero-image-base" src={settings.heroBaseImage} alt="SHEF in a black leather studio portrait" fill priority sizes="100vw" />
-          <Image className="hero-image-curtain" src={settings.heroCurtainImage} alt="" fill priority sizes="100vw" aria-hidden="true" />
+          <Image className="hero-image-curtain" src={settings.heroCurtainImage} alt="" fill sizes="100vw" aria-hidden="true" />
         </div>
         <div className="hero-shade" aria-hidden="true" />
         <div className="hero-chrome">
@@ -35,17 +74,9 @@ export default async function Home() {
           </div>
         </div>
         <div className="hero-lockup">
-          <p className="hero-kicker">{settings.heroKicker}</p>
           <h1 className="hero-title" id="hero-title"><span className="hero-line"><span>{settings.heroTitle}</span></span></h1>
           <p className="hero-edition">{settings.heroEdition}</p>
         </div>
-        <HeroPlayer
-          title={featuredMix?.title}
-          subtitle={featuredMix ? `${featuredMix.note} · ${featuredMix.year} preview` : undefined}
-          artwork={featuredMix?.coverImage}
-          previewTrack={featuredMix?.previewUrl}
-          featuredSet={featuredMix?.href}
-        />
       </section>
 
       <section className="manifesto section-pad" aria-labelledby="manifesto-title">

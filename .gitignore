@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # Supabase CLI metadata
 /supabase/.temp
+
+# Raw assets and local design references
+footer image.png
+hero image 1.png

@@ -1,6 +1,6 @@
 import { appearances as fallbackAppearances, gallery as fallbackGallery, mixes as fallbackMixes, socials as fallbackSocials } from "@/data/site";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabasePublicClient } from "@/lib/supabase/public";
 
 export type Release = {
   year: string;
@@ -274,7 +274,7 @@ export async function getSiteContent(): Promise<SiteContent> {
   if (!isSupabaseConfigured) return fallbackSiteContent;
 
   try {
-    const supabase = await createSupabaseServerClient();
+    const supabase = createSupabasePublicClient();
     const [settingsResult, releasesResult, appearancesResult, galleryResult, pressKitResult] = await Promise.all([
       supabase.from("site_settings").select("*").eq("id", "site").maybeSingle(),
       supabase.from("releases").select("*").eq("published", true).order("sort_order", { ascending: true }).order("year", { ascending: false }),

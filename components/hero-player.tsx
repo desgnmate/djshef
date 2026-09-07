@@ -32,12 +32,42 @@ export function HeroPlayer({
     audio.preload = "metadata";
     audioRef.current = audio;
 
-    const handlePlay = () => setIsPlaying(true);
-    const handlePause = () => setIsPlaying(false);
-    const handleEnded = () => setIsPlaying(false);
+    const handlePlay = () => {
+      setIsPlaying(true);
+      if ("mediaSession" in navigator) {
+        navigator.mediaSession.playbackState = "playing";
+      }
+    };
+    const handlePause = () => {
+      setIsPlaying(false);
+      if ("mediaSession" in navigator) {
+        navigator.mediaSession.playbackState = "paused";
+      }
+    };
+    const handleEnded = () => {
+      setIsPlaying(false);
+      if ("mediaSession" in navigator) {
+        navigator.mediaSession.playbackState = "none";
+      }
+    };
     audio.addEventListener("play", handlePlay);
     audio.addEventListener("pause", handlePause);
     audio.addEventListener("ended", handleEnded);
+
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title,
+        artist: "SHEF",
+        album: subtitle,
+        artwork: artwork ? [{ src: artwork, sizes: "512x512", type: "image/jpeg" }] : [],
+      });
+      navigator.mediaSession.setActionHandler("play", () => {
+        void audioRef.current?.play();
+      });
+      navigator.mediaSession.setActionHandler("pause", () => {
+        audioRef.current?.pause();
+      });
+    }
 
     return () => {
       audio.pause();
@@ -46,14 +76,17 @@ export function HeroPlayer({
       audio.removeEventListener("ended", handleEnded);
       audioRef.current = null;
     };
-  }, [previewTrack]);
+  }, [previewTrack, title, subtitle, artwork]);
 
   const togglePlayback = () => {
     const audio = audioRef.current;
     if (!audio) return;
 
     if (audio.paused) {
-      void audio.play().catch(() => setIsPlaying(false));
+      void audio.play().catch((err) => {
+        setIsPlaying(false);
+        console.warn("Audio playback could not start:", err);
+      });
     } else {
       audio.pause();
     }
